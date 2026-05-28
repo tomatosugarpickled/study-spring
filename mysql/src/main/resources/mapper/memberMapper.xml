@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mysql.mapper.MemberMapper">
+    <insert id="insert">
+        insert into tbl_member(member_email, member_password, member_name)
+        values(#{memberEmail}, #{memberPassword}, #{memberName})
+    </insert>
+
+    <insert id="insertInactive">
+        insert into tbl_member(member_email, member_password, member_name, member_status)
+        values(#{memberEmail}, #{memberPassword}, #{memberName}, #{memberStatus})
+    </insert>
+
+    <select id="selectById" resultType="memberVO">
+        select id, member_email, member_password, member_name, member_status, created_datetime, updated_datetime
+        from tbl_member
+        where id = #{id}
+    </select>
+
+    <select id="selectAll">
+        select id, member_email, member_password, member_name, member_status, created_datetime, updated_datetime
+        from tbl_member
+    </select>
+
+    <update id="updateStatus">
+        update tbl_member
+        set member_status = 'inactive'
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from tbl_member
+        where id = #{id}
+    </delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

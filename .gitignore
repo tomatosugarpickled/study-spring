@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# Gradle
+.gradle/
+build/
+
+# Node
+node_modules/
+
+# Logs / temp
+*.log
+*.tmp
+out/
+
+# Spring config (시크릿 보호)
+application*.yml
+application*.properties

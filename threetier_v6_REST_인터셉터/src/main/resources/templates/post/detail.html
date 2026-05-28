@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UPDATE</title>
+    <link rel="stylesheet" href="/css/post/detail.css">
+
+</head>
+<body>
+    <header th:replace="~{/common/header.html::header}"></header>
+        <div id="container">
+        <div id="post-container">
+            <th:block th:if="${session.member != null}">
+                <div th:if="${session.member.id == post.memberId}">
+                    <a th:href="@{/post/update(id=${post.id})}">수정</a>
+                    <a th:href="@{/post/delete(id=${post.id})}">삭제</a>
+                </div>
+            </th:block>
+            <div><a th:href="@{/post/list}">목록으로</a></div>
+            <div th:object="${post}">
+            <h1 th:text="*{postTitle}"></h1>
+            <h3 th:text="*{postContent}"></h3>
+            <div id="tag-list">
+                <span class="tag" th:id="${tag.id}" th:each="tag: *{tags}" th:text="${tag.tagName}"></span>
+            </div>
+            <div id="image-wrap">
+                <th:block th:each="postFile: *{postFiles}">
+                    <img width="100px" th:id="${postFile.id}" th:src="@{/api/files/display(filePath=${postFile.filePath}, fileName=${postFile.fileName})}">
+                </th:block>
+            </div>
+        </div>
+    </div>
+    <div id="reply-container">
+        <div th:if="${session.member != null}" id="reply-write-wrap">
+            <input type="hidden" id="member-id" th:value="${session.member.id}">
+            <textarea id="reply-content" rows="2" cols="50"></textarea>
+            <button type="button" id="write">작성</button>
+        </div>
+        <div id="replies"></div>
+    </div>
+    </div>
+</body>
+<script th:inline="javascript">
+    const postId = [[${post.id}]];
+</script>
+<script src="/js/reply/service.js"></script>
+<script src="/js/reply/layout.js"></script>
+<script src="/js/reply/event.js"></script>
+</html>
+
+
+
+
+
+
+
+
+
+

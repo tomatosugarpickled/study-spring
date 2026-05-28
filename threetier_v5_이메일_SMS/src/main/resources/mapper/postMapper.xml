@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.threetier.mapper.PostMapper">
+    <sql id="search">
+        <if test="search.keyword != null and search.keyword != ''.toString()">
+            <choose>
+                <when test="search.type == '제목'.toString()">
+                    post_title like concat('%', #{search.keyword}, '%')
+                </when>
+                <when test="search.type == '내용'.toString()">
+                    post_content like concat('%', #{search.keyword}, '%')
+                </when>
+                <otherwise>
+                    (
+                        post_title like concat('%', #{search.keyword}, '%')
+                        or
+                        post_content like concat('%', #{search.keyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+        <if test="search.tagNames != null">
+            and
+            t.post_id in
+            (
+                select post_id
+                from tbl_tag
+                where
+                    tag_name in
+                    <trim prefix="(" suffix=")">
+                        <foreach item="tagName" collection="search.tagNames" separator=",">
+                            #{tagName}
+                        </foreach>
+                    </trim>
+                group by post_id
+                having count(post_id) = #{search.tagNamesSize}
+            )
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_post (post_title, post_content, member_id)
+        values(#{postTitle}, #{postContent}, #{memberId})
+    </insert>
+
+    <select id="selectAll">
+        select
+            distinct
+            m.member_name,
+            p.id, p.post_title, p.post_content, p.post_read_count,
+            p.post_status, p.member_id, p.created_datetime, p.updated_datetime
+        from tbl_member m join tbl_post p
+        on m.id = p.member_id
+        left outer join tbl_tag t
+        on p.id = t.post_id
+        <where>
+            <include refid="search"></include>
+        </where>
+        order by id desc
+        limit #{criteria.count} offset #{criteria.offset}
+    </select>
+
+    <select id="selectTotal">
+        select count(*)
+        from tbl_post p join tbl_tag t
+        on p.id = t.post_id
+        <where>
+            <include refid="search"></include>
+        </where>
+    </select>
+
+    <select id="selectById">
+        select
+            distinct
+            m.member_name,
+            p.id, p.post_title, p.post_content, p.post_read_count,
+            p.post_status, p.member_id, p.created_datetime, p.updated_datetime
+        from tbl_member m join tbl_post p
+        on m.id = p.member_id
+        where p.id = #{id}
+    </select>
+
+    <update id="update">
+        update tbl_post
+        set
+            post_title = #{postTitle},
+            post_content = #{postContent},
+            updated_datetime = current_timestamp
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from tbl_post
+        where id = #{id}
+    </delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

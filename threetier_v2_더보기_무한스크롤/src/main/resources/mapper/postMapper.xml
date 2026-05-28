@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.threetier.mapper.PostMapper">
+    <sql id="search">
+        <if test="search.keyword != null and search.keyword != ''.toString()">
+            <trim prefix="(" prefixOverrides="or" suffix=")">
+                <if test="search.type == '제목'.toString()">
+                    or post_title like concat('%', #{search.keyword}, '%')
+                </if>
+                <if test="search.type == '내용'.toString()">
+                    or post_content like concat('%', #{search.keyword}, '%')
+                </if>
+            </trim>
+        </if>
+        <if test="search.tagName != null and search.tagName != ''.toString()">
+            and t.tag_name = #{search.tagName}
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_post (post_title, post_content, member_id)
+        values(#{postTitle}, #{postContent}, #{memberId})
+    </insert>
+
+    <select id="selectAll">
+        select
+            distinct
+            m.member_name,
+            p.id, p.post_title, p.post_content, p.post_read_count,
+            p.post_status, p.member_id, p.created_datetime, p.updated_datetime
+        from tbl_member m join tbl_post p
+        on m.id = p.member_id
+        left outer join tbl_tag t
+        on p.id = t.post_id
+        <where>
+            <include refid="search"></include>
+        </where>
+        order by id desc
+        limit #{criteria.count} offset #{criteria.offset}
+    </select>
+
+    <select id="selectTotal">
+        select count(*)
+        from tbl_post p join tbl_tag t
+        on p.id = t.post_id
+        <where>
+            <include refid="search"></include>
+        </where>
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

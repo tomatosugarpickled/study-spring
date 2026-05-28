@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WRITE</title>
+</head>
+<body>
+<header th:replace="~{/common/header.html::header}"></header>
+<form action="/post/write" method="post" name="write-form" enctype="multipart/form-data">
+    <input type="hidden" name="memberId" th:value="${session.member.id}">
+    <div>
+        <input type="text" name="postTitle" placeholder="게시글 제목">
+    </div>
+    <div>
+        <textarea name="postContent" rows="5" cols="20" style="resize: none;"></textarea>
+    </div>
+    <div id="tag-list"></div>
+    <div>
+        <input type="text" id="tag-input" placeholder="태그명">
+    </div>
+    <div>
+        <input type="file" name="file" class="file">
+        <input type="file" name="file" class="file">
+<!--        <input type="file" name="file" class="file" multiple>-->
+    </div>
+    <button type="button" id="send">작성</button>
+</form>
+</body>
+<script src="/js/post/write/event.js"></script>
+</html>
+
+
+
+
+
+
+
+
+
+

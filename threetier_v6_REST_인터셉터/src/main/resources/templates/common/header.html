@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<body>
+    <header>
+        <th:block th:if="${session.member != null}">
+            <h3 th:text="|${session.member.memberName}님 환영합니다.|"></h3>
+            <nav>
+                <a th:if="${session.member.provider.value == 'kakao'}" href="https://kauth.kakao.com/oauth/logout?client_id=6c9664c00ac5573fa3d8f1caf80e67f3&logout_redirect_uri=http://localhost:10000/member/login">로그아웃</a>
+                <a th:unless="${session.member.provider.value == 'kakao'}" href="/member/logout">로그아웃</a>
+                <a th:href="@{/post/write}">글 쓰기</a>
+            </nav>
+        </th:block>
+        <th:block th:unless="${session.member != null}">
+            <h3>로그인 후 이용해주세요.</h3>
+            <nav>
+                <a href="/member/login">로그인</a>
+            </nav>
+        </th:block>
+    </header>
+</body>
+</html>

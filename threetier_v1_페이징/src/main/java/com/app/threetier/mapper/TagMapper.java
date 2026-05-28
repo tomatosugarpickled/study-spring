@@ -1,0 +1,28 @@
+package com.app.threetier.mapper;
+
+import com.app.threetier.domain.TagVO;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+@Mapper
+public interface TagMapper {
+//    추가
+    public void insert(TagVO tagVO);
+
+//    목록
+    public List<TagVO> selectAllByPostId(Long id);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+const memberService = (() => {
+    const login = async (member) => {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(member),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Fetch error");
+        }
+
+        return await response.json();
+    }
+
+    const logout = async () => {
+        const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Fetch error");
+        }
+    }
+
+    const info = async (callback) => {
+        const response = await fetch('/api/auth/info');
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Fetch error");
+        }
+
+        const member = await response.json();
+
+        if(callback) {
+            callback(member);
+        }
+    }
+    return {login: login, logout: logout, info: info};
+})();

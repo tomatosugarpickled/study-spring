@@ -1,0 +1,8 @@
+#login-fail-message {
+    color: red;
+    display: none;
+}
+
+#login-fail-message.on {
+    display: block;
+}

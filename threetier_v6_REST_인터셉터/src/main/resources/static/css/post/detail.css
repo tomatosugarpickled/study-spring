@@ -1,0 +1,17 @@
+#container {
+    display: flex;
+    justify-content: center;
+    width: 1000px;
+    margin: 0 auto;
+}
+
+#post-container {
+    border: 1px solid black;
+    width: 498px;
+    margin-right: 4px;
+}
+
+#reply-container {
+    border: 1px solid black;
+    width: 498px;
+}

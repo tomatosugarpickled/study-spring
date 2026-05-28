@@ -1,0 +1,26 @@
+package com.app.app.domain;
+
+
+import com.app.app.audit.Period;
+import com.app.app.common.enumeration.MemberRole;
+import com.app.app.common.enumeration.Status;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+@Getter
+@ToString(callSuper = true)
+@EqualsAndHashCode(of = "id", callSuper = false)
+@SuperBuilder
+public class MemberVO extends Period {
+    private Long id;
+    private String memberName;
+    private String memberEmail;
+    private String memberPassword;
+    private boolean memberEmailVerified;
+    private Status memberStatus;
+    private MemberRole memberRole;
+    private String createdDatetime;
+    private String updatedDatetime;
+}

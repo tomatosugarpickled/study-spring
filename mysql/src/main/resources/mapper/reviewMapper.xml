@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mysql.mapper.ReviewMapper">
+    <insert id="insert">
+        insert into tbl_review (id, review_rate)
+        values(#{id}, #{reviewRate})
+    </insert>
+
+    <select id="selectById" resultType="reviewDTO">
+        select
+            r.id, r.review_rate, p.post_title, p.post_content,
+            p.post_read_count, p.member_id, p.created_datetime, p.updated_datetime
+        from tbl_review r join tbl_post p
+        on r.id = p.id
+        where r.id = #{id}
+    </select>
+
+    <select id="selectWithMemberById" resultType="reviewMemberDTO">
+        select
+            r.id, r.review_rate, p.post_title, p.post_content,
+            p.post_read_count, p.member_id, p.created_datetime, p.updated_datetime,
+            m.member_name
+        from tbl_member m join tbl_post p
+        on m.id = p.member_id
+        join tbl_review r
+        on r.id = p.id
+        where r.id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="reviewMemberDTO">
+        select
+            r.id, r.review_rate, p.post_title, p.post_content,
+            p.post_read_count, p.member_id, p.created_datetime, p.updated_datetime,
+            m.member_name
+        from tbl_member m join tbl_post p
+        on m.id = p.member_id
+        join tbl_review r
+        on r.id = p.id
+        order by p.id desc
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

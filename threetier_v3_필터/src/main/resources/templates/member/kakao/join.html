@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JOIN</title>
+    <link rel="stylesheet" href="/css/member/join.css">
+</head>
+<body>
+<form action="/member/kakao/join" method="post" name="joinForm">
+    <div>
+        <input type="text" name="memberEmail" th:value="${kakao.memberEmail}" readonly>
+    </div>
+    <p id="email-message"></p>
+    <div>
+        <input type="text" name="memberName" placeholder="이름">
+    </div>
+    <div>
+        <input type="file">
+        <input type="file">
+    </div>
+    <button>회원가입</button>
+</form>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

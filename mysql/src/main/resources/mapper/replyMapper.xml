@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mysql.mapper.ReplyMapper">
+    <insert id="insert">
+        insert into tbl_reply (reply_content, member_id, review_id)
+        values(#{replyContent}, #{memberId}, #{reviewId})
+    </insert>
+
+    <insert id="insertReReply">
+        insert into tbl_reply(parent_id, reply_content, depth, member_id, review_id)
+        values(#{parentId}, #{replyContent}, #{depth}, #{memberId}, #{reviewId})
+    </insert>
+
+    <select id="selectDepthInJava" resultType="_int">
+        select max(depth) + 1 from tbl_reply
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="selectDepth" resultType="_int">
+        select ifnull(max(depth) + 1, 2) from tbl_reply
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="selectById" resultType="replyDTO">
+        select
+            m.member_email, m.member_password, m.member_name, m.member_status,
+            m.created_datetime, m.updated_datetime, p.post_title, p.post_content,
+            p.post_read_count, p.member_id, p.created_datetime, p.updated_datetime,
+            r.id, r.parent_id, r.reply_content,
+            r.depth, r.member_id, r.review_id, r.created_datetime, r.updated_datetime
+        from tbl_member m join tbl_post p
+        on m.id = p.member_id
+        join tbl_reply r
+        on m.id = r.member_id
+        where r.id = #{id}
+    </select>
+
+    <select id="selectAllByReviewId" resultType="replyDTO">
+        select
+            m.member_email, m.member_password, m.member_name, m.member_status,
+            m.created_datetime, m.updated_datetime, p.post_title, p.post_content,
+            p.post_read_count, p.member_id, p.created_datetime, p.updated_datetime,
+            r.id, r.parent_id, r.reply_content,
+            r.depth, r.member_id, r.review_id, r.created_datetime, r.updated_datetime
+        from tbl_member m join tbl_post p
+                               on m.id = p.member_id
+                          join tbl_reply r
+                               on m.id = r.member_id
+        where p.id = #{reviewId} and r.depth = 1
+    </select>
+
+    <select id="selectAllRereplyByReplyId" resultType="replyDTO">
+        select
+            m.member_email, m.member_password, m.member_name, m.member_status,
+            m.created_datetime, m.updated_datetime, p.post_title, p.post_content,
+            p.post_read_count, p.member_id, p.created_datetime, p.updated_datetime,
+            r.id, r.parent_id, r.reply_content,
+            r.depth, r.member_id, r.review_id, r.created_datetime, r.updated_datetime
+        from tbl_member m join tbl_post p
+                               on m.id = p.member_id
+                          join tbl_reply r
+                               on m.id = r.member_id
+        where r.parent_id = #{replyId}
+    </select>
+
+    <update id="update">
+        update tbl_reply
+        set reply_content = #{replyContent}, updated_datetime = current_timestamp()
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from tbl_reply
+        where id = #{id}
+    </delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

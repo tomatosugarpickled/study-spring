@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<input type="text" name="message">
+<p id="result"></p>
+<button id="send">스팸 확인</button>
+</body>
+<script>
+    const button = document.getElementById('send');
+    const p = document.getElementById('result');
+
+    button.addEventListener("click", async (e) => {
+        const message = document.querySelector("input[name='message']").value;
+        const response = await fetch(`/ai`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: message })
+        })
+        const result = await response.json();
+        console.log(result)
+        text = result.isSpam? "스팸입니다." : "스팸이 아닙니다.";
+        p.innerText = text;
+    });
+</script>
+</html>

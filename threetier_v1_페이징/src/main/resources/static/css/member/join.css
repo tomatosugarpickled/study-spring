@@ -1,0 +1,7 @@
+#email-message {
+    color: red;
+}
+
+#email-message.on {
+    color: green;
+}

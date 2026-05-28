@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="/css/member/login.css">
+    <script src="/js/member/login/service.js"></script>
+    <script src="/js/member/login/event.js"></script>
+</head>
+<body>
+<th:block layout:fragment="content">
+<div class="container">
+  <div class="signup-form-container">
+    <div class="form-header">
+      <h1>로그인</h1>
+      <p>서비스 이용을 위해 로그인해 주세요</p>
+    </div>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <input type="email" id="email" required autocomplete="off" th:value="${rememberEmail}">
+        <label for="email">이메일</label>
+        <div class="error-message"></div>
+      </div>
+
+      <div class="input-group">
+        <input type="password" id="password" required>
+        <label for="password">비밀번호</label>
+        <div class="error-message"></div>
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" name="remember" th:value="true" th:checked="${remember}">
+          <span>이메일 저장</span>
+        </label>
+        <a href="/js/member/find-password" class="forgot-password">비밀번호 찾기</a>
+      </div>
+
+      <button type="button" class="signup-button">
+        <span class="button-text">로그인</span>
+      </button>
+      <button type="button" id="kakao-login">카카오 로그인</button>
+      <button type="button" id="naver-login">네이버 로그인</button>
+
+      <div class="signup-link">
+        계정이 없으신가요? <a href="/member/join">회원가입</a>
+      </div>
+    </form>
+  </div>
+</div>
+</th:block>
+</body>
+</html>

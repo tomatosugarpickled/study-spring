@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feeling Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            letter-spacing: -0.01em;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Top nav (Tesla-style thin bar) ─────────────────────── */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 32px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .nav__brand {
+            font-weight: 700;
+            letter-spacing: 0.3em;
+        }
+
+        .nav__links {
+            display: flex;
+            gap: 28px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .nav__links span {
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .nav__links span:hover {
+            opacity: 0.6;
+        }
+
+        /* ── Hero section ───────────────────────────────────────── */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 64px 24px 48px;
+            background:
+                radial-gradient(ellipse at top, rgba(255, 255, 255, 0.08) 0%, transparent 55%),
+                radial-gradient(ellipse at bottom, rgba(120, 120, 255, 0.06) 0%, transparent 60%),
+                #000;
+        }
+
+        .hero__eyebrow {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 22px;
+        }
+
+        .hero__title {
+            font-size: clamp(40px, 7vw, 80px);
+            font-weight: 500;
+            line-height: 1.02;
+            margin-bottom: 18px;
+        }
+
+        .hero__subtitle {
+            font-size: 17px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 520px;
+            line-height: 1.6;
+            margin-bottom: 56px;
+        }
+
+        /* ── Form ───────────────────────────────────────────────── */
+        .form {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .form__input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            font-family: inherit;
+            line-height: 1.6;
+            padding: 20px 24px;
+            min-height: 140px;
+            resize: vertical;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .form__input::placeholder {
+            color: rgba(255, 255, 255, 0.32);
+        }
+
+        .form__input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ── Actions ────────────────────────────────────────────── */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+            margin: 36px auto 0;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 14px 32px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn--primary {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn--primary:hover {
+            background: rgba(255, 255, 255, 0.86);
+        }
+
+        .btn--ghost {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            backdrop-filter: blur(8px);
+        }
+
+        .btn--ghost:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* ── Result card ────────────────────────────────────────── */
+        .result {
+            max-width: 560px;
+            width: 100%;
+            margin: 48px auto 0;
+            padding: 36px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            text-align: center;
+        }
+
+        .result:empty {
+            display: none;
+        }
+
+        .result__label {
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 14px;
+        }
+
+        .result__value {
+            font-size: 34px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* ── Footer ─────────────────────────────────────────────── */
+        .footer {
+            padding: 24px;
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        /* ── Responsive ─────────────────────────────────────────── */
+        @media (max-width: 540px) {
+            .nav {
+                padding: 16px 20px;
+            }
+
+            .nav__links {
+                gap: 18px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 48px 20px 32px;
+            }
+
+            .hero__subtitle {
+                font-size: 15px;
+                margin-bottom: 40px;
+            }
+
+            .result {
+                padding: 28px 24px;
+            }
+
+            .result__value {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav__brand">FEELING</div>
+        <div class="nav__links">
+            <span>About</span>
+            <span>History</span>
+            <span>Contact</span>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <p class="hero__eyebrow">Feeling Check</p>
+        <h1 class="hero__title">지금, 당신의 감정은.</h1>
+        <p class="hero__subtitle">
+            한 줄의 문장으로 오늘을 기록하세요.<br>
+            AI가 당신의 마음을 읽어드립니다.
+        </p>
+
+        <div class="form">
+            <textarea
+                id="feeling"
+                class="form__input"
+                name="feeling"
+                placeholder="예: 오늘 발표를 끝내고 너무 후련해..."></textarea>
+        </div>
+
+        <div class="actions">
+            <button id="submit" class="btn btn--primary" type="button">분석하기</button>
+            <button id="reset" class="btn btn--ghost" type="button">다시 쓰기</button>
+        </div>
+
+        <div id="result" class="result"></div>
+    </section>
+
+    <footer class="footer">
+        © Feeling Check · Inspired by the Future
+    </footer>
+</body>
+<script>
+    const button = document.getElementById('submit');
+    const p = document.getElementById('result');
+
+    button.addEventListener("click", async (e) => {
+        const feeling = document.querySelector("textarea[name='feeling']").value;
+        const response = await fetch(`/ai/feeling-check`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ feeling: feeling })
+        })
+        const result = await response.json();
+        console.log(result)
+            text = result.feeling;
+        console.log(text)
+        p.innerText = text;
+    });
+</script>
+</html>

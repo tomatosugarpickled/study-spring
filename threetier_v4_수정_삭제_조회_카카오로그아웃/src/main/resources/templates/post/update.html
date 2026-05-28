@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UPDATE</title>
+</head>
+<body>
+<header th:replace="~{/common/header.html::header}"></header>
+<form action="/post/update" method="post" name="update-form" enctype="multipart/form-data" th:object="${post}">
+    <input type="hidden" name="id" th:value="*{id}">
+    <div>
+        <input type="text" name="postTitle" placeholder="게시글 제목" th:value="*{postTitle}">
+    </div>
+    <div>
+        <textarea name="postContent" rows="5" cols="20" style="resize: none;" th:text="*{postContent}"></textarea>
+    </div>
+    <div id="tag-list">
+        <span class="tag" th:id="${tag.id}" th:each="tag: *{tags}" th:text="${tag.tagName}"></span>
+    </div>
+    <div>
+        <input type="text" id="tag-input" placeholder="태그명">
+    </div>
+    <div id="image-wrap">
+        <th:block th:each="postFile: *{postFiles}">
+            <img width="100px" th:id="${postFile.id}" th:src="@{/api/files/display(filePath=${postFile.filePath}, fileName=${postFile.fileName})}">
+        </th:block>
+    </div>
+    <div>
+        <input type="file" name="file" class="file">
+        <input type="file" name="file" class="file">
+        <!--        <input type="file" name="file" class="file" multiple>-->
+    </div>
+    <button type="button" id="send">작성</button>
+</form>
+</body>
+<script src="/js/post/update/event.js"></script>
+</html>
+
+
+
+
+
+
+
+
+
+

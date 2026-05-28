@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>베르다 농원 · 작물 수확량 검수</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Black+Han+Sans&family=Gowun+Batang:wght@400;700&family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+
+        :root {
+            --paper:        #ede2c8;
+            --paper-deep:   #d8c8a3;
+            --paper-edge:   #b8a37a;
+            --ink:          #1a1410;
+            --ink-soft:     #3d2f24;
+            --barn:         #a83a2a;
+            --barn-deep:    #7d2418;
+            --denim:        #3a4d65;
+            --denim-faded:  #6b8090;
+            --wheat:        #c9a661;
+            --wheat-deep:   #8e6e2a;
+            --soil:         #5a3818;
+            --soil-deep:    #2e1b08;
+            --sprout:       #6b8e3d;
+        }
+
+        body {
+            font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: var(--paper);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.55;
+            overflow-x: hidden;
+        }
+
+        /* ── Paper grain (whole page) ──────────────────────────── */
+        .grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.18;
+            mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 0 0.08 0 0 0 0.4 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        }
+
+        /* ── Top bar ───────────────────────────────────────────── */
+        .bar {
+            position: relative;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 32px;
+            padding: 18px 40px;
+            border-bottom: 2px solid var(--ink);
+            background: var(--paper);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: "Nanum Myeongjo", "Noto Serif KR", serif;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.04em;
+            color: var(--ink);
+        }
+        .brand__mark {
+            width: 28px; height: 28px;
+            color: var(--ink);
+        }
+        .brand small {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.32em;
+            color: var(--ink-soft);
+            margin-left: 8px;
+            border-left: 2px solid var(--ink);
+            padding-left: 12px;
+        }
+        .links {
+            display: flex;
+            gap: 28px;
+            justify-content: center;
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.32em;
+            color: var(--ink-soft);
+        }
+        .links a { cursor: pointer; transition: color .2s; }
+        .links a:hover { color: var(--barn); }
+        .meta {
+            font-family: "IBM Plex Mono", "Courier New", monospace;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            color: var(--ink-soft);
+            text-align: right;
+        }
+
+        /* ── Hero (illustrated field) ──────────────────────────── */
+        .hero {
+            position: relative;
+            height: clamp(440px, 70vh, 700px);
+            overflow: hidden;
+            border-bottom: 2px solid var(--ink);
+        }
+        .hero__field {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            transform-origin: 60% 60%;
+            animation: kenburns 36s ease-in-out infinite alternate;
+        }
+        @keyframes kenburns {
+            0%   { transform: scale(1.0)  translate(0, 0); }
+            100% { transform: scale(1.06) translate(-1.5%, -1%); }
+        }
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, transparent 55%, rgba(46, 27, 8, 0.35) 100%);
+            pointer-events: none;
+        }
+        .hero__text {
+            position: absolute;
+            left: clamp(24px, 6vw, 80px);
+            bottom: clamp(40px, 8vh, 80px);
+            max-width: 720px;
+            color: var(--paper);
+            text-shadow: 0 2px 24px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+        .eyebrow {
+            display: inline-block;
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.42em;
+            padding: 7px 14px;
+            border: 1.5px solid rgba(237, 226, 200, 0.7);
+            margin-bottom: 22px;
+            color: var(--paper);
+        }
+        .title {
+            font-family: "Black Han Sans", "Nanum Myeongjo", serif;
+            font-weight: 900;
+            font-size: clamp(52px, 9vw, 110px);
+            line-height: 0.95;
+            letter-spacing: -0.01em;
+        }
+        .title em {
+            font-style: normal;
+            color: var(--wheat);
+            position: relative;
+        }
+        .lead {
+            margin-top: 22px;
+            font-family: "Gowun Batang", "Noto Serif KR", serif;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.7;
+            color: rgba(237, 226, 200, 0.95);
+            max-width: 540px;
+        }
+
+        /* ── Sub-info strip ────────────────────────────────────── */
+        .strip {
+            position: relative;
+            z-index: 4;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-bottom: 2px solid var(--ink);
+            background: var(--paper-deep);
+        }
+        .strip__cell {
+            padding: 18px 24px;
+            border-right: 1px solid var(--ink);
+            font-family: "IBM Plex Mono", "Noto Sans KR", monospace;
+            font-size: 13px;
+            color: var(--ink-soft);
+        }
+        .strip__cell:last-child { border-right: none; }
+        .strip__cell b {
+            display: block;
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.32em;
+            color: var(--barn);
+            margin-bottom: 6px;
+        }
+        @media (max-width: 760px) {
+            .strip { grid-template-columns: repeat(2, 1fr); }
+            .strip__cell:nth-child(2) { border-right: none; }
+            .strip__cell:nth-child(1), .strip__cell:nth-child(2) { border-bottom: 1px solid var(--ink); }
+        }
+
+        /* ── Ledger (form) ─────────────────────────────────────── */
+        .ledger {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 56px clamp(24px, 5vw, 64px) 60px;
+            position: relative;
+            z-index: 4;
+        }
+        .ledger__head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            border-bottom: 3px double var(--ink);
+            padding-bottom: 24px;
+            margin-bottom: 36px;
+        }
+        .ledger__title {
+            font-family: "Nanum Myeongjo", "Noto Serif KR", serif;
+            font-weight: 800;
+            font-size: clamp(34px, 5vw, 56px);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        .ledger__sub {
+            font-family: "Gowun Batang", serif;
+            font-size: 13px;
+            color: var(--ink-soft);
+            margin-top: 8px;
+            letter-spacing: 0.04em;
+        }
+        .stamp {
+            display: inline-block;
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.24em;
+            color: var(--barn);
+            border: 2.5px solid var(--barn);
+            padding: 10px 18px;
+            transform: rotate(-3deg);
+            box-shadow: 1px 1px 0 var(--barn);
+            white-space: nowrap;
+        }
+
+        /* ── Sections ──────────────────────────────────────────── */
+        .section {
+            margin-top: 36px;
+            border: 2px solid var(--ink);
+            background: rgba(255, 252, 240, 0.5);
+            position: relative;
+        }
+        .section__head {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--ink);
+            background: var(--paper-deep);
+        }
+        .section__num {
+            font-family: "Nanum Myeongjo", "Noto Serif KR", serif;
+            font-weight: 800;
+            font-size: 26px;
+            color: var(--barn);
+            line-height: 1;
+        }
+        .section__title {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.32em;
+            color: var(--ink);
+        }
+        .section__hint {
+            margin-left: auto;
+            font-family: "Gowun Batang", serif;
+            font-size: 12px;
+            color: var(--ink-soft);
+            letter-spacing: 0.04em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+        }
+        .grid > .field {
+            padding: 18px 22px;
+            border-right: 1px solid rgba(26, 20, 16, 0.25);
+            border-bottom: 1px solid rgba(26, 20, 16, 0.25);
+        }
+        .grid > .field:nth-child(3n) { border-right: none; }
+        .grid > .field:nth-last-child(-n+3) { border-bottom: none; }
+        @media (max-width: 760px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .grid > .field { border-right: 1px solid rgba(26, 20, 16, 0.25); border-bottom: 1px solid rgba(26, 20, 16, 0.25); }
+            .grid > .field:nth-child(3n) { border-right: 1px solid rgba(26, 20, 16, 0.25); }
+            .grid > .field:nth-child(2n) { border-right: none; }
+            .grid > .field:nth-last-child(-n+3) { border-bottom: 1px solid rgba(26, 20, 16, 0.25); }
+            .grid > .field:nth-last-child(-n+2) { border-bottom: none; }
+        }
+        @media (max-width: 480px) {
+            .grid { grid-template-columns: 1fr; }
+            .grid > .field { border-right: none; }
+        }
+
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.18em;
+            color: var(--ink-soft);
+        }
+        .field label .unit {
+            font-family: "IBM Plex Mono", monospace;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            color: var(--wheat-deep);
+            margin-left: 6px;
+        }
+        .field input,
+        .field select {
+            font-family: "IBM Plex Mono", "Courier New", monospace;
+            font-size: 16px;
+            color: var(--ink);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--ink);
+            border-radius: 0;
+            padding: 6px 2px;
+            transition: border-color .2s, background .2s;
+        }
+        .field select option {
+            font-family: "Noto Sans KR", sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+        }
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            background: rgba(168, 58, 42, 0.06);
+            border-bottom-color: var(--barn);
+        }
+        .field input::placeholder { color: rgba(26, 20, 16, 0.3); }
+
+        /* ── Actions ───────────────────────────────────────────── */
+        .actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 36px;
+            padding-top: 24px;
+            border-top: 3px double var(--ink);
+            flex-wrap: wrap;
+        }
+        .signature {
+            margin-right: auto;
+            font-family: "Gowun Batang", serif;
+            font-size: 13px;
+            color: var(--ink-soft);
+            letter-spacing: 0.04em;
+        }
+        .signature em {
+            font-style: normal;
+            font-weight: 700;
+            color: var(--barn);
+        }
+        .btn {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 0.24em;
+            padding: 14px 30px;
+            border: none;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .2s, background .2s;
+        }
+        .btn--primary {
+            background: var(--barn);
+            color: var(--paper);
+            box-shadow: 4px 4px 0 var(--ink);
+        }
+        .btn--primary:hover {
+            background: var(--barn-deep);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--ink);
+        }
+        .btn--primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0 0 0 var(--ink);
+        }
+        .btn--ghost {
+            background: var(--paper);
+            color: var(--ink);
+            border: 2px solid var(--ink);
+        }
+        .btn--ghost:hover { background: var(--paper-deep); }
+        .btn[disabled] { opacity: 0.6; cursor: wait; }
+
+        /* ── Result (rubber stamp) ────────────────────────────── */
+        .seal {
+            max-width: 1080px;
+            margin: 24px auto 60px;
+            padding: 0 clamp(24px, 5vw, 64px);
+            display: none;
+            position: relative;
+            z-index: 4;
+        }
+        .seal.is-visible { display: block; }
+        .seal__inner {
+            border: 4px double var(--barn);
+            padding: 40px 32px;
+            text-align: center;
+            background: rgba(255, 252, 240, 0.4);
+            position: relative;
+            transform: rotate(-1.2deg);
+            animation: stampDown 0.5s cubic-bezier(.4, 1.6, .6, 1);
+        }
+        @keyframes stampDown {
+            0%   { transform: rotate(-12deg) scale(1.6); opacity: 0; }
+            60%  { transform: rotate(2deg)   scale(0.96); opacity: 1; }
+            100% { transform: rotate(-1.2deg) scale(1); }
+        }
+        .seal__label {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.36em;
+            color: var(--barn);
+            margin-bottom: 16px;
+        }
+        .seal__value {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 14px;
+            font-family: "Nanum Myeongjo", "Noto Serif KR", serif;
+            font-weight: 800;
+        }
+        .seal__value em {
+            font-style: normal;
+            font-size: clamp(56px, 10vw, 96px);
+            color: var(--ink);
+            line-height: 1;
+        }
+        .seal__value span {
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: 0.18em;
+            color: var(--ink-soft);
+        }
+        .seal__hint {
+            margin-top: 14px;
+            font-family: "Gowun Batang", serif;
+            font-size: 12px;
+            color: var(--ink-soft);
+            letter-spacing: 0.18em;
+        }
+        .seal__bar {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 6px 14px;
+            border: 2px solid var(--barn);
+            font-family: "Noto Sans KR", sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            color: var(--barn);
+            transform: rotate(2deg);
+        }
+
+        /* ── Footer ────────────────────────────────────────────── */
+        .footer {
+            position: relative;
+            z-index: 4;
+            border-top: 2px solid var(--ink);
+            background: var(--paper-deep);
+            padding: 28px 40px;
+            display: flex;
+            justify-content: space-between;
+            font-family: "Gowun Batang", serif;
+            font-size: 12px;
+            letter-spacing: 0.06em;
+            color: var(--ink-soft);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .footer b {
+            font-family: "Nanum Myeongjo", serif;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            color: var(--ink);
+        }
+
+        /* ── Dust motes (subtle on hero) ───────────────────────── */
+        .mote {
+            position: absolute;
+            width: 3px; height: 3px;
+            border-radius: 50%;
+            background: rgba(237, 226, 200, 0.5);
+            box-shadow: 0 0 6px rgba(237, 226, 200, 0.4);
+            opacity: 0;
+            animation: drift linear infinite;
+        }
+        @keyframes drift {
+            0%   { transform: translateY(0) translateX(0); opacity: 0; }
+            10%  { opacity: 0.7; }
+            90%  { opacity: 0.5; }
+            100% { transform: translateY(-180px) translateX(20px); opacity: 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ── 상단 바 ──────────────────────────────────────────── -->
+<header class="bar">
+    <div class="brand">
+        <svg class="brand__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M12 22 L12 8"/>
+            <path d="M12 14 C9 14 7 12 7 9 C10 9 12 11 12 14"/>
+            <path d="M12 14 C15 14 17 12 17 9 C14 9 12 11 12 14"/>
+            <path d="M12 11 C9.5 11 8 9 8 6 C10.5 6 12 8 12 11"/>
+            <path d="M12 11 C14.5 11 16 9 16 6 C13.5 6 12 8 12 11"/>
+            <path d="M12 8 C10 8 8.5 6.5 8.5 4 C10.5 4 12 5.5 12 8"/>
+            <path d="M12 8 C14 8 15.5 6.5 15.5 4 C13.5 4 12 5.5 12 8"/>
+        </svg>
+        베르다 농원 <small>들녘 작업소 · 2024년 설립</small>
+    </div>
+    <nav class="links">
+        <a>농지</a><a>수확</a><a>일지</a><a>문의</a>
+    </nav>
+    <div class="meta" id="metaClock">— · 04호 검수서</div>
+</header>
+
+<!-- ── 히어로 ──────────────────────────────────────────── -->
+<section class="hero">
+    <svg class="hero__field" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"  stop-color="#7e8a92"/>
+                <stop offset="40%" stop-color="#b9a878"/>
+                <stop offset="75%" stop-color="#e6b87a"/>
+                <stop offset="92%" stop-color="#c47840"/>
+                <stop offset="100%" stop-color="#8e4a22"/>
+            </linearGradient>
+            <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#5a3818"/>
+                <stop offset="50%"  stop-color="#3d2410"/>
+                <stop offset="100%" stop-color="#1f1206"/>
+            </linearGradient>
+            <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0%"  stop-color="#ffe9b8"/>
+                <stop offset="40%" stop-color="#ffb866"/>
+                <stop offset="100%" stop-color="#c47840" stop-opacity="0"/>
+            </radialGradient>
+        </defs>
+
+        <rect x="0" y="0" width="1600" height="540" fill="url(#sky)"/>
+
+        <!-- 해 -->
+        <circle cx="1180" cy="510" r="180" fill="url(#sun)"/>
+        <circle cx="1180" cy="510" r="60"  fill="#ffd28a" opacity="0.95"/>
+
+        <!-- 지평선 나무 실루엣 -->
+        <g fill="#2a2418" opacity="0.8">
+            <path d="M0 540 L60 528 L120 533 L200 520 L280 530 L360 524 L460 532 L560 526 L660 530 L760 522 L860 528 L960 521 L1060 530 L1160 525 L1260 528 L1360 522 L1460 530 L1600 526 L1600 540 Z"/>
+            <ellipse cx="180" cy="520" rx="22" ry="14"/>
+            <ellipse cx="220" cy="522" rx="14" ry="10"/>
+            <ellipse cx="540" cy="518" rx="28" ry="16"/>
+            <ellipse cx="900" cy="520" rx="18" ry="12"/>
+            <ellipse cx="1340" cy="518" rx="24" ry="14"/>
+            <rect x="178" y="510" width="2" height="10"/>
+            <rect x="538" y="508" width="2" height="12"/>
+            <rect x="898" y="510" width="2" height="10"/>
+            <rect x="1338" y="508" width="2" height="12"/>
+        </g>
+
+        <!-- 흙 -->
+        <rect x="0" y="540" width="1600" height="360" fill="url(#soil)"/>
+
+        <!-- 흙고랑 (원근 부채꼴) -->
+        <g stroke="#1f1206" stroke-width="3" fill="none" opacity="0.75">
+            <line x1="800" y1="545" x2="-400" y2="900"/>
+            <line x1="800" y1="545" x2="-100" y2="900"/>
+            <line x1="800" y1="545" x2="180"  y2="900"/>
+            <line x1="800" y1="545" x2="420"  y2="900"/>
+            <line x1="800" y1="545" x2="620"  y2="900"/>
+            <line x1="800" y1="545" x2="800"  y2="900"/>
+            <line x1="800" y1="545" x2="980"  y2="900"/>
+            <line x1="800" y1="545" x2="1180" y2="900"/>
+            <line x1="800" y1="545" x2="1420" y2="900"/>
+            <line x1="800" y1="545" x2="1700" y2="900"/>
+            <line x1="800" y1="545" x2="2000" y2="900"/>
+        </g>
+        <g stroke="#7d4c20" stroke-width="1.4" fill="none" opacity="0.55">
+            <line x1="800" y1="546" x2="-280" y2="900"/>
+            <line x1="800" y1="546" x2="40"   y2="900"/>
+            <line x1="800" y1="546" x2="300"  y2="900"/>
+            <line x1="800" y1="546" x2="520"  y2="900"/>
+            <line x1="800" y1="546" x2="710"  y2="900"/>
+            <line x1="800" y1="546" x2="890"  y2="900"/>
+            <line x1="800" y1="546" x2="1080" y2="900"/>
+            <line x1="800" y1="546" x2="1300" y2="900"/>
+            <line x1="800" y1="546" x2="1560" y2="900"/>
+            <line x1="800" y1="546" x2="1880" y2="900"/>
+        </g>
+
+        <!-- 새싹 (가까울수록 큼) -->
+        <g fill="#6b8e3d">
+            <circle cx="100"  cy="870" r="4"/>
+            <circle cx="240"  cy="850" r="3.5"/>
+            <circle cx="380"  cy="830" r="3"/>
+            <circle cx="500"  cy="812" r="2.6"/>
+            <circle cx="600"  cy="795" r="2.2"/>
+            <circle cx="680"  cy="778" r="1.8"/>
+            <circle cx="740"  cy="762" r="1.4"/>
+            <circle cx="900"  cy="762" r="1.4"/>
+            <circle cx="960"  cy="778" r="1.8"/>
+            <circle cx="1040" cy="795" r="2.2"/>
+            <circle cx="1140" cy="812" r="2.6"/>
+            <circle cx="1260" cy="830" r="3"/>
+            <circle cx="1400" cy="850" r="3.5"/>
+            <circle cx="1540" cy="870" r="4"/>
+
+            <circle cx="180"  cy="870" r="3.5"/>
+            <circle cx="460"  cy="830" r="2.6"/>
+            <circle cx="660"  cy="795" r="1.8"/>
+            <circle cx="940"  cy="795" r="1.8"/>
+            <circle cx="1140" cy="830" r="2.6"/>
+            <circle cx="1420" cy="870" r="3.5"/>
+        </g>
+
+        <!-- 지평선 글로우 -->
+        <ellipse cx="800" cy="540" rx="900" ry="40" fill="#ffd28a" opacity="0.25"/>
+    </svg>
+
+    <!-- 먼지 입자 -->
+    <div class="mote" style="left: 12%; bottom: 20%; animation-duration: 14s; animation-delay: 0s;"></div>
+    <div class="mote" style="left: 28%; bottom: 14%; animation-duration: 18s; animation-delay: -3s;"></div>
+    <div class="mote" style="left: 44%; bottom: 26%; animation-duration: 16s; animation-delay: -7s;"></div>
+    <div class="mote" style="left: 62%; bottom: 18%; animation-duration: 20s; animation-delay: -11s;"></div>
+    <div class="mote" style="left: 78%; bottom: 22%; animation-duration: 15s; animation-delay: -5s;"></div>
+    <div class="mote" style="left: 88%; bottom: 12%; animation-duration: 17s; animation-delay: -9s;"></div>
+
+    <div class="hero__text">
+        <p class="eyebrow">현장 검수 · 2024년 작기</p>
+        <h1 class="title">심은 만큼,<br><em>거두십시오.</em></h1>
+        <p class="lead">
+            흙 한 줌의 무게, 햇살 한 시간의 깊이.<br>
+            베르다 농원 — 데이터로 다스리는 정직한 농사.
+        </p>
+    </div>
+</section>
+
+<!-- ── 검수 정보 스트립 ───────────────────────────────── -->
+<div class="strip">
+    <div class="strip__cell"><b>검수원</b>현장 검수원 04호</div>
+    <div class="strip__cell"><b>작성일</b><span id="metaDate">—</span></div>
+    <div class="strip__cell"><b>모델</b>XGBoost · v0.1.0</div>
+    <div class="strip__cell"><b>출력</b>단위 면적당 kg (kg/m²)</div>
+</div>
+
+<!-- ── 검수서 본문 ────────────────────────────────────── -->
+<section class="ledger">
+    <div class="ledger__head">
+        <div>
+            <h2 class="ledger__title">작물 수확량 검수서</h2>
+            <p class="ledger__sub">베르다 농원 발행 · 모든 항목 미터법 표기</p>
+        </div>
+        <div class="stamp">제 04 호</div>
+    </div>
+
+    <form id="cropForm" autocomplete="off">
+
+        <div class="section">
+            <div class="section__head">
+                <span class="section__num">一.</span>
+                <span class="section__title">작물 · 식재</span>
+                <span class="section__hint">// 무엇을, 언제, 어떤 흙에</span>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label>작물 종류</label>
+                    <select name="crop_type" required>
+                        <option value="" disabled selected>— 선택 —</option>
+                        <option value="Tomato">토마토</option>
+                        <option value="Cucumber">오이</option>
+                        <option value="Lettuce">양상추</option>
+                        <option value="Pepper">피망</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>식재 월 <span class="unit">1~12</span></label>
+                    <input type="number" name="planting_month" min="1" max="12" step="1" placeholder="11" required>
+                </div>
+                <div class="field">
+                    <label>토양 산도 pH <span class="unit">5.0~8.0</span></label>
+                    <input type="number" name="soil_pH" step="0.01" min="5" max="8" placeholder="6.50" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section__head">
+                <span class="section__num">二.</span>
+                <span class="section__title">환경 데이터</span>
+                <span class="section__hint">// 햇살과 공기, 흙의 컨디션</span>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label>평균 기온 <span class="unit">°C</span></label>
+                    <input type="number" name="avg_temperature_C" step="0.1" placeholder="23.5" required>
+                </div>
+                <div class="field">
+                    <label>상대 습도 <span class="unit">%</span></label>
+                    <input type="number" name="humidity_percent" step="0.1" placeholder="73.6" required>
+                </div>
+                <div class="field">
+                    <label>이산화탄소 <span class="unit">ppm</span></label>
+                    <input type="number" name="co2_ppm" step="1" placeholder="917" required>
+                </div>
+                <div class="field">
+                    <label>광 강도 <span class="unit">럭스</span></label>
+                    <input type="number" name="light_intensity_lux" step="1" placeholder="16821" required>
+                </div>
+                <div class="field">
+                    <label>일조 시간 <span class="unit">시간</span></label>
+                    <input type="number" name="photoperiod_hours" step="0.1" placeholder="10.0" required>
+                </div>
+                <div class="field">
+                    <label>해충/질병 지수 <span class="unit">0~10</span></label>
+                    <input type="number" name="pest_severity" step="0.1" min="0" max="10" placeholder="2.5" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section__head">
+                <span class="section__num">三.</span>
+                <span class="section__title">관수 · 시비</span>
+                <span class="section__hint">// 물과 거름</span>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label>관개량 <span class="unit">mm/일</span></label>
+                    <input type="number" name="irrigation_mm" step="0.1" placeholder="9.8" required>
+                </div>
+                <div class="field">
+                    <label>질소 N <span class="unit">kg/ha</span></label>
+                    <input type="number" name="fertilizer_N_kg_ha" step="0.1" placeholder="167" required>
+                </div>
+                <div class="field">
+                    <label>인산 P <span class="unit">kg/ha</span></label>
+                    <input type="number" name="fertilizer_P_kg_ha" step="0.1" placeholder="60" required>
+                </div>
+                <div class="field">
+                    <label>칼륨 K <span class="unit">kg/ha</span></label>
+                    <input type="number" name="fertilizer_K_kg_ha" step="0.1" placeholder="120" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="signature">서명 ─ <em>현장 검수원 04호</em> · <span id="metaSignDate">—</span></div>
+            <button id="resetBtn"  class="btn btn--ghost"   type="reset">초기화</button>
+            <button id="submitBtn" class="btn btn--primary" type="submit">검수서 제출</button>
+        </div>
+    </form>
+</section>
+
+<!-- ── 결과 도장 ──────────────────────────────────────── -->
+<div id="result" class="seal">
+    <div class="seal__inner">
+        <p class="seal__label">예상 수확량</p>
+        <div class="seal__value">
+            <em id="resultValue">—</em>
+            <span>kg / m²</span>
+        </div>
+        <p class="seal__hint">베르다 농원 검수 인증</p>
+        <div class="seal__bar">수확 승인</div>
+    </div>
+</div>
+
+<footer class="footer">
+    <span><b>베르다 농원</b> · 손으로 일군 정직한 농사</span>
+    <span>© 2024 · 모든 고랑 무단복제 금지</span>
+</footer>
+
+<script>
+    /* ── 날짜 도장 ───────────────────────────────────────── */
+    (function fillDates() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const stamp = `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`;
+        const time  = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        document.getElementById('metaClock').textContent      = `${stamp} ${time} · 04호 검수서`;
+        document.getElementById('metaDate').textContent       = stamp;
+        document.getElementById('metaSignDate').textContent   = stamp;
+    })();
+
+    /* ── 카운트업 ───────────────────────────────────────── */
+    function countUp(el, to, duration = 1100) {
+        const start = performance.now();
+        function frame(now) {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = (to * eased).toFixed(2);
+            if (t < 1) requestAnimationFrame(frame);
+            else el.textContent = to.toFixed(2);
+        }
+        requestAnimationFrame(frame);
+    }
+
+    /* ── 폼 제출 ────────────────────────────────────────── */
+    const form = document.getElementById('cropForm');
+    const result = document.getElementById('result');
+    const resultValue = document.getElementById('resultValue');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        const original = submitBtn.textContent;
+        submitBtn.textContent = '도장 찍는 중…';
+
+        const fd = new FormData(form);
+        const payload = {};
+        for (const [k, v] of fd.entries()) {
+            payload[k] = (k === 'crop_type') ? v : Number(v);
+        }
+        console.log('payload', payload);
+
+        try {
+            const res = await fetch('/ai/crop-check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            console.log('response', data);
+
+            const v = data.yield_kg_per_m2;
+            result.classList.remove('is-visible');
+            void result.offsetWidth;
+            result.classList.add('is-visible');
+            if (typeof v === 'number') {
+                resultValue.textContent = '0.00';
+                countUp(resultValue, v, 1100);
+            } else {
+                resultValue.textContent = '—';
+            }
+            result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+            console.error(err);
+            resultValue.textContent = '오류';
+            result.classList.add('is-visible');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = original;
+        }
+    });
+
+    form.addEventListener('reset', () => {
+        result.classList.remove('is-visible');
+    });
+</script>
+</body>
+</html>

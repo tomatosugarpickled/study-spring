@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EX06</title>
+</head>
+<body>
+    <div th:object="${student}">
+        <h1 th:text="|*{name}님 안녕하세요|"></h1>
+        <h2 th:text="*{kor}"></h2>
+        <h2 th:text="*{eng}"></h2>
+        <h2 th:text="*{math}"></h2>
+        <h2 th:text="|*{total}점|"></h2>
+        <h2 th:text="|*{average}점|"></h2>
+    </div>
+</body>
+</html>

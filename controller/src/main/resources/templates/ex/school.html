@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SCHOOL</title>
+</head>
+<body th:object="${school}">
+    <h1 th:text="*{name}"></h1>
+    <th:block th:each="student: *{students}">
+        <h2 th:text="${student.name}"></h2>
+        <h2 th:text="${student.kor}"></h2>
+        <h2 th:text="${student.eng}"></h2>
+        <h2 th:text="${student.math}"></h2>
+        <h2 th:text="${student.total}"></h2>
+        <h2 th:text="${student.average}"></h2>
+    </th:block>
+</body>
+</html>

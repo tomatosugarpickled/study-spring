@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>LIST</title>
+    <link rel="stylesheet" href="/css/post/list.css">
+</head>
+<body>
+    <header th:replace="~{/common/header.html::header}"></header>
+<!--    <div id="page-wrap"></div>-->
+    <div id="search-wrap">
+        <select name="type">
+            <option value="전체" selected>전체</option>
+            <option value="제목">제목</option>
+            <option value="내용">내용</option>
+        </select>
+        <input type="text" name="keyword">
+        <button type="button" id="search-button">검색</button>
+    </div>
+    <div id="tag-wrap">
+        <th:block th:each="tag: ${tags}">
+            <input type="checkbox" name="tagNames" th:value="${tag}">
+            <button class="tag-button" th:text="${tag}"></button>
+        </th:block>
+    </div>
+    <table id="post-list">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>태그들</th>
+                <th>작성자</th>
+                <th>날짜</th>
+                <th>조회수</th>
+                <th>썸네일</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+<!--    <div id="more-button-wrap">-->
+<!--        <button id="more-button" type="button">더보기</button>-->
+<!--    </div>-->
+</body>
+<script th:inline="javascript">
+    <!--/*
+    const posts = [[${postsWithPaging.posts}]];
+    const criteria = [[${postsWithPaging.criteria}]];
+    */-->
+</script>
+<script src="/js/post/list/service.js"></script>
+<script src="/js/post/list/layout.js"></script>
+<script src="/js/post/list/event.js"></script>
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <link rel="stylesheet" href="/css/header/header.css">
+    <script src="/js/header/event.js"></script>
+</head>
+<body>
+<!-- header -->
+<header th:replace="/common/header::header"></header>
+
+<!-- content -->
+<th:block layout:fragment="content"></th:block>
+
+<!-- footer -->
+<footer th:replace="/common/footer::footer"></footer>
+</body>
+</html>

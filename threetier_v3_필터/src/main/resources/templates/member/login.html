@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="/css/member/login.css">
+</head>
+<body>
+<form action="/member/login" method="post">
+    <div>
+        <input type="text" name="memberEmail" placeholder="이메일" th:value="${rememberMemberEmail}">
+    </div>
+    <div>
+        <input type="password" name="memberPassword" placeholder="비밀번호">
+    </div>
+    <p id="login-fail-message">아이디 혹은 비밀번호를 다시 확인해주세요</p>
+    <label>
+        <input type="checkbox" name="remember" value="true" th:checked="${remember}"> 이메일 저장
+    </label>
+    <button>로그인</button>
+    <button type="button" id="kakao-login">
+        <img src="/image/kakao_login_large_wide.png">
+    </button>
+</form>
+<script>const login = "[[${login}]]";</script>
+<script src="/js/member/login/event.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

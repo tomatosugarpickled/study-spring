@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/spring?serverTimezone=Asia/Seoul
     username: spring
-    password: 1234
+    password: changeme
   session:
     redis:
       repository-type: indexed
@@ -28,18 +28,6 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
-#openssl rand -base64 32
+# openssl rand -base64 32 로 생성한 값을 넣을 것
 jwt:
-  secret: mdar0TBhbD1ZXBHmjEO5WbX8IqIBRHlTMqSWyoSWPOM=
-
-
-
-
-
-
-
-
-
-
-
-
+  secret: REPLACE_WITH_BASE64_32BYTE_SECRET

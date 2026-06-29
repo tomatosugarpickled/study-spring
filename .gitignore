@@ -27,4 +27,6 @@ out/
 
 # Spring config (시크릿 보호)
 application*.yml
+application*.yaml
 application*.properties
+!application*.example

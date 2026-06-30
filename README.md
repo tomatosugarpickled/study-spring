@@ -4,9 +4,9 @@ Spring Framework / Spring Boot / Spring Security 학습 정리.
 
 ## Framework
 
-- **라이브러리** — 개발자가 작성해 놓은 코드 파일을 의미.
-- **API** — 여러 라이브러리가 모여있는 패키지(JAR)를 의미.
-- **프레임워크** — API가 굉장히 많이 모여져서 덩치가 커져있는 것을 의미.
+- **라이브러리** — 개발자가 필요한 기능을 직접 호출해서 사용하는 코드 묶음.
+- **API** — 기능을 사용하기 위해 외부에 공개된 규칙 또는 인터페이스.
+- **프레임워크** — 애플리케이션의 기본 구조와 실행 흐름을 제공하고, 개발자가 정해진 지점에 코드를 채워 넣는 개발 기반.
 
 ### Framework 장점
 
@@ -217,7 +217,7 @@ RESPONSE ◄───⑦───  ⑥↕      ⑤↕
 | Pointcut | 연예인이 광고만 진행하겠다고 함 |
 | Advice | 매니저가 계약서 작성 |
 
-### Joinpoint
+### Advice 종류
 
 - `Around` (전 구역)
 - `Before` (메소드 시작 직후)
@@ -313,17 +313,17 @@ JWT = Header + Payload + Signature
 
 - **Header** — 토큰 타입과 암호화 알고리즘 정보.
 - **Payload** — 사용자 정보, 만료시간 등.
-- **Signature** — Header + Payload를 시크릿 키로 암호화해서 변조 방지.
+- **Signature** — Header + Payload를 기반으로 서명값을 만들어 변조 여부를 확인.
 
 Signature는 Header와 Payload가 변조되지 않았다는 걸 증명하는 코드이다.
-Header와 Payload를 특정 알고리즘 (HMAC, RSA 등)과 시크릿 키 (Secret key)를 사용해서 암호화 또는 해시 처리된다.
+Header와 Payload를 특정 알고리즘(HMAC, RSA 등)과 키를 사용해 서명값으로 만든다.
 서버는 클라이언트가 보낸 JWT를 받을 때, 같은 방식으로 Header와 Payload를 사용해 다시 서명을 만들고 JWT에 붙어온 서명 (Signature)과 새로 만든 서명이 같으면 조작된 게 없다고 판단한다.
 만약 다르다면 위변조된 것으로 간주하고, 토큰이 거절된다.
 
 ### Spring Security + JWT 구성
 
-- **Provider** — JWT 생성, 서명, 검증 기능을 구현한다.
-- **Filter** — 인증에 성공하면 JWT를 생성 후 클라이언트에 전달.
+- **JwtTokenProvider** — JWT 생성, 서명, 검증 기능을 담당하도록 직접 구현한 컴포넌트.
+- **AuthenticationFilter** — 로그인 요청을 가로채 인증을 시도하고, 인증 성공 시 JWT를 생성하여 클라이언트에 전달하도록 구성한 필터.
 - **UserDetailService** — 사용자 정보 조회 및 인증 처리를 담당하며, 실제 사용자 정보를 관리한다.
 - **SecurityConfig** — 보안 설정 (필터 체인, 인증 방식, 접근 제한, 권한 설정 등).
 
@@ -337,12 +337,12 @@ Header와 Payload를 특정 알고리즘 (HMAC, RSA 등)과 시크릿 키 (Secre
 
 ### CSRF / CORS
 
-- **CSRF** — Cross-Site Request Forgery.
-- **CORS** — origin은 IP 주소의 port 번호까지. 여러 개의 서버가 하나처럼 움직일 수 있게 해준다. 설정을 해줘야 한다.
+- **CSRF** — Cross-Site Request Forgery. 사용자가 의도하지 않은 요청을 인증된 상태로 보내게 만드는 공격.
+- **CORS** — 브라우저에서 서로 다른 출처(origin) 간 요청을 허용할지 결정하는 정책. origin은 프로토콜, 호스트, 포트까지 포함한다.
 
 ### Token
 
 | 종류 | 기간 |
 |---|---|
 | Access Token | 기간 짧음 |
-| Refresh Token | 기간 김 |
+| Refresh Token | 기간 긴 편 |

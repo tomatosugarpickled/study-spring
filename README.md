@@ -2,6 +2,23 @@
 
 Spring Framework / Spring Boot / Spring Security 학습 정리.
 
+## 프로젝트 구성
+
+- [app](./app/) — Spring Boot 기본 프로젝트
+- [controller](./controller/) — 컨트롤러와 요청 매핑 실습
+- [dependency](./dependency/) — 의존성 주입(DI) 실습
+- [mysql](./mysql/) — MyBatis 기반 MySQL 연동 실습
+- [threetier_v1_페이징](./threetier_v1_페이징/) — 3계층 게시판 v1 (페이징)
+- [threetier_v2_더보기_무한스크롤](./threetier_v2_더보기_무한스크롤/) — v2 (더보기·무한스크롤)
+- [threetier_v3_필터](./threetier_v3_필터/) — v3 (검색 필터)
+- [threetier_v4_수정_삭제_조회_카카오로그아웃](./threetier_v4_수정_삭제_조회_카카오로그아웃/) — v4 (CRUD 완성·카카오 로그아웃)
+- [threetier_v5_이메일_SMS](./threetier_v5_이메일_SMS/) — v5 (이메일·SMS 발송)
+- [threetier_v6_REST_인터셉터](./threetier_v6_REST_인터셉터/) — v6 (REST API·인터셉터)
+- [app_day03_oauth](./app_day03_oauth/) — OAuth 소셜 로그인 실습
+- [app_day04_s3_swagger](./app_day04_s3_swagger/) — S3 업로드·Swagger 문서화 실습
+
+3계층 게시판(threetier)은 같은 프로젝트를 기능 단위로 버전을 올려가며 확장한 실습이다.
+
 ## Framework
 
 - **라이브러리** — 개발자가 필요한 기능을 직접 호출해서 사용하는 코드 묶음.
